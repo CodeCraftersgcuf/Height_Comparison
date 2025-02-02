@@ -6,7 +6,7 @@ import Celebrity from "./components/HomeComp/portions/Celebrity";
 import Entity from "./components/HomeComp/portions/Entity";
 import ImagePortion from "./components/HomeComp/portions/ImagePortion";
 import Selection from "./components/HomeComp/Setection";
-import ChartPortion from "./components/HomeComp/ChartPortion";
+import ChartGrapgh from "./components/HomeComp/chart/ChartGrapgh";
 
 const Home = () => {
   const [selectedTab, setSelectedTab] = useState<string>("addition");
@@ -49,7 +49,7 @@ const Home = () => {
       </div>
       <div className="p-4 border min-w-[300px]">{renderComponent()}</div>
       <div className="w-full">
-        <ChartPortion/>
+        <ChartGrapgh/>
       </div>
     </div>
   );

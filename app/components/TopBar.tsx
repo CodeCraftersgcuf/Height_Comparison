@@ -24,7 +24,7 @@ const TopBar = () => {
   ]
   console.log(NavbarLinks);
   return (
-    <div className="flex items-center justify-between gap-8 2xl:container mx-auto p-4 shadow-md">
+    <div className="flex items-center justify-between gap-8 2xl:container mx-auto p-4 shadow">
       <div className="flex items-center gap-8">
         <Image
           src={logoIcon}
