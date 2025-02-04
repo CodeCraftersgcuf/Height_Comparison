@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import Image from "next/image";
-import female from '../../../../public/avatar/female.svg'
 
 type AvatarSelectorProps = {
   avatar: string;
@@ -12,20 +11,21 @@ const AvatarSelector: React.FC<AvatarSelectorProps> = ({ avatar, setAvatar }) =>
   const [selectedCategory, setSelectedCategory] = useState<"Ectomorph" | "Mesomorph" | "Endomorph">("Ectomorph");
 
   const avatars = {
-    Ectomorph: [female.src, "/avatars/ecto2.svg", "/avatars/ecto3.svg"],
+    Ectomorph: ["https://cdn-v2.heightcomparison.com/modules/avatars/application/X2cjan2k_IiTWCxydlhlo__M191.svg", "/avatars/ecto2.svg", "/avatars/ecto3.svg"],
     Mesomorph: ["/avatars/meso1.svg", "/avatars/meso2.svg", "/avatars/meso3.svg"],
     Endomorph: ["/avatars/endo1.svg", "/avatars/endo2.svg", "/avatars/endo3.svg"],
   };
-  console.log("svg object : ", female)
 
   return (
     <div className="mt-3 relative">
+      <h1 className="mb-2 text-xs">Select Avatar</h1>
+      <hr />
       <button
-        className="w-full border p-2 rounded-md text-sm text-gray-700 flex justify-between items-center"
+        className="mt-2 w-full border p-2 rounded-md text-sm text-gray-700 flex justify-between items-center"
         onClick={() => setShowDropdown(!showDropdown)}
       >
         {avatar ? (
-          <Image src={avatar} alt="Selected Avatar" width={24} height={24} className="rounded-full" />
+          <Image src={avatar} alt="Selected Avatar" width={24} height={24} className="rounded-full aspect-square" />
         ) : (
           "Choose Avatar"
         )}

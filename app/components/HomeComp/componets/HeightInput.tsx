@@ -17,12 +17,12 @@ const HeightInput: React.FC<HeightInputProps> = ({
   return (
     <>
       <div className="flex mt-2 rounded-md items-center overflow-hidden border">
-        <span className="bg-gray-200 block p-2 text-sm">Height</span>
+        <span className="bg-gray-200 block p-2 px-4 text-sm">Height</span>
         <div className="flex items-center w-full overflow-hidden">
-          <button className={`w-full p-2 text-sm ${heightType === "ft" ? "bg-blue-300" : ""}`} onClick={() => setHeightType("ft")}>
+          <button className={`w-full p-2 text-sm ${heightType === "ft" ? "bg-blue-500" : ""}`} onClick={() => setHeightType("ft")}>
             ft
           </button>
-          <button className={`w-full p-2 text-sm ${heightType === "cm" ? "bg-blue-300" : ""}`} onClick={() => setHeightType("cm")}>
+          <button className={`w-full p-2 text-sm ${heightType === "cm" ? "bg-blue-500" : ""}`} onClick={() => setHeightType("cm")}>
             cm
           </button>
         </div>
