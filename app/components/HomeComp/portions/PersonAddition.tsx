@@ -5,6 +5,8 @@ import GenderSelector from "../componets/GenderSelector";
 import HeightInput from "../componets/HeightInput";
 import ColorPicker from "../componets/ColorPicker";
 import AvatarSelector from "../componets/AvatarSelector";
+import male from '../../../../public/avatar/male.svg'
+import { addPerson } from "../localstorage";
 
 const PersonAddition = () => {
   const [gender, setGender] = useState<"Male" | "Female">("Male");
@@ -14,23 +16,39 @@ const PersonAddition = () => {
   const [heightInch, setHeightInch] = useState("");
   const [heightCm, setHeightCm] = useState("");
   const [selectedColor, setSelectedColor] = useState("#ff9800");
-  const [avatar, setAvatar] = useState("");
+  const [avatar, setAvatar] = useState(male.src);
 
   const handleSubmit = () => {
     const personData = {
       gender,
       name,
-      height: heightType === "ft" ? `${heightFt}.${heightInch}` : heightCm,
+      height: heightType === "ft" ? (parseInt(heightFt) * 30.48 + parseInt(heightInch) * 2.54) : parseInt(heightCm),
       heightType: heightType,
       color: selectedColor,
       avatar,
     };
+
+    if (!personData.name || !personData.height || !personData.avatar) {
+      console.error("Please fill in all required fields.");
+      return;
+    }
+    
+    addPerson(personData.name, personData.color,personData.height , personData.avatar);
+    setGender("Male");
+    setName("");
+    setHeightType("ft");
+    setHeightFt("");
+    setHeightInch("");
+    setHeightCm("");
+    setSelectedColor("#ff9800");
+    setAvatar(male.src);
     console.log("Person Data:", personData);
   };
 
   return (
-    <div className="w-64 bg-white p-4 rounded-md shadow-md">
-      <h3 className="text-xs">Enter Your Details:</h3>
+    <div className="w-64">
+      <h3 className="text-xs mb-1">Enter Your Details:</h3>
+      <hr />
 
       <GenderSelector gender={gender} setGender={setGender} />
 
