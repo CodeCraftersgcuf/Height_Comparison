@@ -19,11 +19,11 @@ const Selection = ({
         setactiveTabs(tab.value);
     };
     return (
-        <div className="w-fit flex flex-col rounded-lg">
+        <div className="flex md:flex-col rounded-lg">
             {tabs.map((tab, index) => (
                 <button
                     key={index}
-                    className={`capitalize flex flex-col px-2 items-center justify-center text-sm border-y border-white text-nowrap py-${tabPadding} ${activeTabs === tab.value ? 'bg-white' : 'bg-gray-200'} transition duration-200`}
+                    className={`capitalize w-full flex flex-col px-2 items-center justify-center text-sm border-y border-white text-nowrap py-${tabPadding} ${activeTabs === tab.value ? 'bg-white' : 'bg-gray-200'} transition duration-200`}
                     onClick={() => handleTabClick(tab)}
                 >
                     <i className={`${tab.icon} text-2xl`}></i>

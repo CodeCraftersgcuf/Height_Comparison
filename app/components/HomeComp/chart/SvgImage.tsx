@@ -1,19 +1,19 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 
 interface SvgCanvasProps {
   svgUrl: string;
   color: string;
-  width: number;
-  height: number;
+  height: number; // Height will be used to scale the width proportionally
 }
 
-const SvgImage: React.FC<SvgCanvasProps> = ({ svgUrl, color, width, height }) => {
+const SvgImage: React.FC<SvgCanvasProps> = ({ svgUrl, color, height }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [error, setError] = useState<string | null>(null);
+  const [aspectRatio, setAspectRatio] = useState<number>(1); // Default aspect ratio (square)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const loadSvgToCanvas = async () => {
       try {
         const response = await fetch(svgUrl);
@@ -32,7 +32,18 @@ const SvgImage: React.FC<SvgCanvasProps> = ({ svgUrl, color, width, height }) =>
         const img = new Image();
         img.src = svgUrlObject;
         img.onload = () => {
-          // Resize canvas based on SVG width and height
+          const originalWidth = img.width || 100;
+          const originalHeight = img.height || 100;
+
+          // Ensure a valid aspect ratio (avoid division by zero)
+          if (originalHeight > 0) {
+            setAspectRatio(originalWidth / originalHeight);
+          }
+
+          // Auto-calculate width based on height and aspect ratio
+          const width = height * (originalWidth / originalHeight);
+
+          // Resize canvas before setting height
           canvas.width = width;
           canvas.height = height;
 
@@ -56,7 +67,7 @@ const SvgImage: React.FC<SvgCanvasProps> = ({ svgUrl, color, width, height }) =>
     };
 
     loadSvgToCanvas();
-  }, [svgUrl, color, width, height]);
+  }, [svgUrl, color, height]);
 
   if (error) {
     return <p className="text-red-500">Error: {error}</p>;
