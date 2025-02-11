@@ -5,54 +5,54 @@ import GenderSelector from "../componets/GenderSelector";
 import HeightInput from "../componets/HeightInput";
 import ColorPicker from "../componets/ColorPicker";
 import AvatarSelector from "../componets/AvatarSelector";
-import male from '../../../../public/avatar/male.svg'
+import male from '../../../../public/avatar/male.svg';
 import { addPerson } from "../localstorage";
 
-const PersonAddition = () => {
+const PersonAddition = ({ onAddItem }: { onAddItem: (item: any) => void }) => {
   const [gender, setGender] = useState<"Male" | "Female">("Male");
   const [name, setName] = useState("");
   const [heightType, setHeightType] = useState<"ft" | "cm">("ft");
   const [heightFt, setHeightFt] = useState("");
   const [heightInch, setHeightInch] = useState("");
   const [heightCm, setHeightCm] = useState("");
-  const [selectedColor, setSelectedColor] = useState("#ff9800");
+  const [selectedColor, setSelectedColor] = useState("");
   const [avatar, setAvatar] = useState(male.src);
 
   const handleSubmit = () => {
-    const personData = {
-      gender,
-      name,
-      height: heightType === "ft" ? (parseInt(heightFt) * 30.48 + parseInt(heightInch) * 2.54) : parseInt(heightCm),
-      heightType: heightType,
-      color: selectedColor,
-      avatar,
-    };
+    const height =
+      heightType === "ft"
+        ? parseInt(heightFt) * 30.48 + parseInt(heightInch) * 2.54
+        : parseInt(heightCm);
 
-    if (!personData.name || !personData.height || !personData.avatar) {
+    if (!name || !height || !avatar) {
       console.error("Please fill in all required fields.");
       return;
     }
-    
-    addPerson(personData.name, personData.color,personData.height , personData.avatar);
-    setGender("Male");
-    setName("");
-    setHeightType("ft");
-    setHeightFt("");
-    setHeightInch("");
-    setHeightCm("");
-    setSelectedColor("#ff9800");
-    setAvatar(male.src);
-    console.log("Person Data:", personData);
+
+    // Add to localStorage
+    // the selectedcolor is not selected then use rand math for colro
+    const color = selectedColor || `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, "0")}`;
+    const newPerson = addPerson(name, color, height, avatar);
+
+    // Update parent component state
+    onAddItem(newPerson[newPerson.length - 1]);
+    // setGender("Male");
+    // setName("");
+    // setHeightType("ft");
+    // setHeightFt("");
+    // setHeightInch("");
+    // setHeightCm("");
+    // setSelectedColor("#ff9800");
+    // setAvatar(male.src);
   };
 
   return (
-    <div className="w-64">
+    <div className="">
       <h3 className="text-xs mb-1">Enter Your Details:</h3>
       <hr />
 
       <GenderSelector gender={gender} setGender={setGender} />
 
-      {/* Name Input */}
       <div className="flex items-center mt-2 border rounded-md">
         <label htmlFor="name" className="bg-gray-200 p-2">Name</label>
         <input
@@ -80,7 +80,6 @@ const PersonAddition = () => {
 
       <AvatarSelector avatar={avatar} setAvatar={setAvatar} />
 
-      {/* Submit Button */}
       <button onClick={handleSubmit} className="w-full mt-3 bg-blue-600 text-white py-2 rounded-md">
         + Add Person
       </button>

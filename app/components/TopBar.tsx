@@ -31,7 +31,7 @@ const TopBar = () => {
           alt='logo'
           width={250}
         />
-        <div className='flex items-center gap-4'>
+        <div className='hidden md:flex items-center gap-4'>
           {NavbarLinks.map((item, index) => (
             <NavBarLink
               key={index}
@@ -49,9 +49,9 @@ const TopBar = () => {
         </Link>
         <Link
           href={'/signup'}
-          className='bg-red-500 text-white py-2 px-4 rounded-lg'
+          className='bg-red-500 text-white py-2 px-4 rounded-lg flex items-center gap-1 text-nowrap'
         >
-          Sign Up ------ its Free
+          Sign Up <hr className='w-1 md:w-5' /> its Free
         </Link>
       </div>
     </div>

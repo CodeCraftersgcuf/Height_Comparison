@@ -5,11 +5,12 @@ export interface Item {
   title: string;
   color: string;
   height: number;
-  avatarUrl: string; // New column for avatar image URL
+  avatarUrl: string;
 }
 
 // Key for localStorage
 const STORAGE_KEY = "personList";
+const MAX_PERSONS = 5; // 🔥 Limit of 5 persons
 
 /**
  * Get items from localStorage
@@ -23,27 +24,39 @@ export const getLocalStorageItems = (): Item[] => {
  * Save items to localStorage
  */
 export const saveToLocalStorage = (items: Item[]) => {
+  let data = getLocalStorageItems();
+  if (data.length > MAX_PERSONS) {
+    console.warn("Cannot add more than 5 persons.");
+    return data; // 🔥 Prevent adding more
+  }
   localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
 };
 
 /**
- * Add a new person
+ * Add a new person (🔥 Only if limit is not exceeded)
  */
 export const addPerson = (
   title: string,
   color: string,
   height: number,
-  avatarUrl: string // New parameter for avatar image
+  avatarUrl: string
 ) => {
+  let items = getLocalStorageItems();
+
+  if (items.length >= MAX_PERSONS) {
+    console.warn("Cannot add more than 5 persons.");
+    return items; // 🔥 Prevent adding more
+  }
+
   const newPerson: Item = {
     id: uuidv4(),
     title,
     color,
     height,
-    avatarUrl, // Store avatar URL
+    avatarUrl,
   };
 
-  const updatedItems = [...getLocalStorageItems(), newPerson];
+  const updatedItems = [...items, newPerson];
   saveToLocalStorage(updatedItems);
   return updatedItems;
 };
@@ -52,7 +65,12 @@ export const addPerson = (
  * Update an existing person
  */
 export const updatePerson = (id: string, updatedData: Partial<Item>) => {
+
   let items = getLocalStorageItems();
+  if (items.length >= MAX_PERSONS) {
+    console.warn("Cannot add more than 5 persons.");
+    return items; // 🔥 Prevent adding more
+  }
   items = items.map((item) =>
     item.id === id ? { ...item, ...updatedData } : item
   );

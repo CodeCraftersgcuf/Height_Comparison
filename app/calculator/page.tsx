@@ -1,7 +1,11 @@
+import ChildCalculator from './components/ChildCalculator'
+import HeightConverter from './components/HeightConverter'
+
 const page = () => {
   return (
-    <div>
-      hello world
+    <div className="container mx-auto flex flex-col gap-12">
+      <ChildCalculator/>
+      <HeightConverter/>
     </div>
   )
 }

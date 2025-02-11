@@ -1,21 +1,29 @@
 import Image from "next/image";
 import { useState } from "react";
 import female from "../../../../public/avatar/female.svg";
+import male from "../../../../public/avatar/male.svg";
+import { addPerson } from "../localstorage";
 
 type EntityType = {
-  name: string;
-  url: string;
-}[];
+  title: string;
+  avatarUrl: string;
+  color: string;
+  height: number;
+};
 
-const entities: EntityType = [
-  { name: "person 1", url: female },
-  { name: "person 2", url: female },
-  { name: "person 3", url: female },
-  { name: "person 4", url: female },
+type EntityProps = {
+  onAddItem: (newItem: { title: string; color: string; height: number; avatarUrl: string }) => void;
+};
+
+const entities: EntityType[] = [
+  { title: "Tom Cruise", color: "#2ECC71", height: 170, avatarUrl: female.src },
+  { title: "Leonardo DiCaprio", color: "#3498DB", height: 183, avatarUrl: male.src },
+  { title: "hello world", color: "#3498DB", height: 100000, avatarUrl: "https://cdn-v2.heightcomparison.com/modules/avatars/application/YZye5rrdEDz8mKL41IMbj__The_White_House.svg" },
+  { title: "car", color: "#3498DB", height: 198, avatarUrl: "https://cdn-v2.heightcomparison.com/modules/avatars/application/8GgoAcY9lpTNhlqOvyT0h__Car.svg" },
 ];
 
-const Entity = () => {
-  const [filteredEntities, setFilteredEntities] = useState<EntityType>(entities);
+const Entity = ({ onAddItem }: EntityProps) => {
+  const [filteredEntities, setFilteredEntities] = useState<EntityType[]>(entities);
   const [searchTerm, setSearchTerm] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -24,16 +32,19 @@ const Entity = () => {
 
     if (value.length > 0) {
       const matches = entities.filter((suggestion) =>
-        suggestion.name.toLowerCase().includes(value)
+        suggestion.title.toLowerCase().includes(value)
       );
       setFilteredEntities(matches);
     } else {
       setFilteredEntities(entities);
     }
   };
-  const handleSelect = (entity : object)=>{
-    console.log("selected entity : " , entity)
-  }
+
+  const handleSelect = (entity: EntityType) => {
+    const newPerson = addPerson(entity.title, entity.color, entity.height, entity.avatarUrl);
+    onAddItem(newPerson[newPerson.length - 1]);
+    // onAddItem(newItem); // Add the selected item using the passed handler
+  };
 
   return (
     <div>
@@ -53,10 +64,11 @@ const Entity = () => {
             key={index}
             width={100}
             height={100}
-            alt={entity.name}
-            src={entity.url}
-            onClick={()=>handleSelect(entity)}
+            alt={entity.title}
+            src={entity.avatarUrl}
+            onClick={() => handleSelect(entity)} // Select the entity
             className="aspect-square cursor-pointer rounded-md object-contain hover:shadow-md"
+            title={entity.title}
           />
         ))}
       </div>
