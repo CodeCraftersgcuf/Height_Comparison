@@ -4,7 +4,7 @@ import "./globals.css";
 import TopBar from "./components/TopBar";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import Footer from "./components/Footer";
-
+import Providers from "./components/providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,9 +31,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+          <Providers>
         <TopBar/>
         {children}
         <Footer/>
+        </Providers>
       </body>
     </html>
   );

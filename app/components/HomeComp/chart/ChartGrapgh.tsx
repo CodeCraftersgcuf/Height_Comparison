@@ -98,6 +98,7 @@ const ChartGraph: React.FC<ChartGraphProps> = ({ Dataitems, onDeleteItem }) => {
       { max: 800, gap: 200 },                   // 800 cm (8 m)
       { max: 600, gap: 100 },                   // 600 cm (6 m)
       { max: 400, gap: 20 },
+      { max: 300, gap: 50 },
     ];
 
     for (const { max, gap } of gapValues) {
