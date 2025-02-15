@@ -1,54 +1,68 @@
+import { useState, useEffect } from "react";
 import Image from "next/image";
-import { useState } from "react";
-import female from "../../../../public/avatar/female.svg";
-import male from "../../../../public/avatar/male.svg";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 import { addPerson } from "../localstorage";
 
+// Fetch entities from API
+const fetchEntities = async () => {
+  const response = await axios.get("http://localhost:8000/api/entities");
+  console.log("API Response:", response.data); // Debugging log
+  return response.data.entities || []; // Extract entities array
+};
+
 type EntityType = {
-  title: string;
-  avatarUrl: string;
-  color: string;
-  height: number;
+  E_id: string;
+  name: string; // Rename from "title" to "name"
+  link: string;
+  parameters:JSON; //
 };
 
 type EntityProps = {
-  onAddItem: (newItem: { title: string; color: string; height: number; avatarUrl: string }) => void;
+  onAddItem: (newItem: EntityType) => void;
 };
 
-const entities: EntityType[] = [
-  { title: "Tom Cruise", color: "#2ECC71", height: 170, avatarUrl: female.src },
-  { title: "Leonardo DiCaprio", color: "#3498DB", height: 183, avatarUrl: male.src },
-  { title: "hello world", color: "#3498DB", height: 100000, avatarUrl: "https://cdn-v2.heightcomparison.com/modules/avatars/application/YZye5rrdEDz8mKL41IMbj__The_White_House.svg" },
-  { title: "car", color: "#3498DB", height: 198, avatarUrl: "https://cdn-v2.heightcomparison.com/modules/avatars/application/8GgoAcY9lpTNhlqOvyT0h__Car.svg" },
-];
-
 const Entity = ({ onAddItem }: EntityProps) => {
-  const [filteredEntities, setFilteredEntities] = useState<EntityType[]>(entities);
+  const { data: entities = [], error, isLoading } = useQuery({
+    queryKey: ["entities"],
+    queryFn: fetchEntities,
+  });
+
   const [searchTerm, setSearchTerm] = useState("");
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.trim().toLowerCase();
-    setSearchTerm(value);
+  useEffect(() => {
+    console.log("Fetched entities:", entities);
+  }, [entities]);
 
-    if (value.length > 0) {
-      const matches = entities.filter((suggestion) =>
-        suggestion.title.toLowerCase().includes(value)
-      );
-      setFilteredEntities(matches);
-    } else {
-      setFilteredEntities(entities);
-    }
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value.trim().toLowerCase());
   };
+
+  const filteredEntities = entities.filter((entity: EntityType) =>
+    entity.name.toLowerCase().includes(searchTerm)
+  );
 
   const handleSelect = (entity: EntityType) => {
-    const newPerson = addPerson(entity.title, entity.color, entity.height, entity.avatarUrl);
-    onAddItem(newPerson[newPerson.length - 1]);
-    // onAddItem(newItem); // Add the selected item using the passed handler
+    const data =JSON.parse(entity.parameters);
+    const heightObject = data.find(item => item.parameter.name === "height");
+    
+    // Get the value of height
+    const heightValue = heightObject ? heightObject.value : null;
+
+    console.log(heightValue);  // Output: "2100"
+    const newPerson = addPerson(entity.name, "defaultColor", heightValue, entity.link);
+    onAddItem(newPerson[newPerson.length - 1] as EntityType);
   };
+
+  if (isLoading) return <p>Loading...</p>;
+  if (error) {
+    console.error("Error fetching entities:", error);
+    return <p className="text-red-500">Failed to load data.</p>;
+  }
 
   return (
     <div>
-      <h1 className="">Add an entity:</h1>
+      <h1>Add an entity:</h1>
       <div>
         <input
           type="text"
@@ -58,17 +72,17 @@ const Entity = ({ onAddItem }: EntityProps) => {
           onChange={handleChange}
         />
       </div>
-      <div className="p-2 grid grid-cols-3 gap-2 gap-y-4 bg-gray-100 shadow-md rounded-md mt-4">
-        {filteredEntities.map((entity, index) => (
+      <div className="p-2 grid grid-cols-3 gap-2 gap-y-4 bg-gray-100 max-h-[300px] overflow-auto shadow-md rounded-md mt-4">
+        {filteredEntities.map((entity: EntityType, index: number) => (
           <Image
             key={index}
             width={100}
             height={100}
-            alt={entity.title}
-            src={entity.avatarUrl}
-            onClick={() => handleSelect(entity)} // Select the entity
+            alt={entity.name}
+            src={entity.link}
+            onClick={() => handleSelect(entity)}
             className="aspect-square cursor-pointer rounded-md object-contain hover:shadow-md"
-            title={entity.title}
+            title={entity.name}
           />
         ))}
       </div>
